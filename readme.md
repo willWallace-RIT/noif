@@ -1,7 +1,6 @@
 [shadertoy](https://www.shadertoy.com/view/tfcXzr)
 
-noif algorithm
-spatial algorithm
+noif spatial algorithm
 
 uses the diagonal of a screen to create a box of a position and size using a proportional height and width in relation to the screen.
 the code avoid if and uses mults,subtracts and bit shifting to detect overlap of the fairly approximated bounding box centered on the diagonal.
