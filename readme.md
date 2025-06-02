@@ -1,4 +1,4 @@
-[s](https://www.shadertoy.com/view/tfcXzr)
+[shadertoy](https://www.shadertoy.com/view/tfcXzr)
 
 noif algorithm
 spatial algorithm
