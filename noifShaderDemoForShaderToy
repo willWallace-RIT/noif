@@ -1,0 +1,96 @@
+
+
+   //written by northbot aka Will Gardner circa 2025
+            //i dont need no if statements or no greater than or less than operators. lets do this with addition,subtraction, and multiplication.
+
+            //is there hardware ramifications to this? maybe...
+
+            //this also brings into being a rectangle almost entirely with negativity.
+
+            //this is a size and position of a box with two variables using a proportionate xy of the screen.
+            //it is a box test but to be cheaper it doesnt use value comparison. a physics app would be a first line of defense before aabb.
+            //it would need the divide approx for the proportion coordinates from bottom left and top right.
+            const float MIN = 0.2f;
+            const float MAX = 0.5f;
+			const float MIN2 = 0.4f;
+            const float MAX2 = 0.6f;
+
+          //https://www.shadertoy.com/view/wlyXRt
+
+			float invHack(float x){
+
+							return uintBitsToFloat(0x7F000000u - floatBitsToUint(x));
+							//return 1.0/x;
+              // there is a shadertoy or stack for this somewhere...
+						}
+						float fInv(float x){
+						  float guess = invHack(x);
+							float inv = guess *(2.0-x*guess);
+							return inv;
+
+
+              // there is a shadertoy or stack for this somewhere...
+						}
+
+
+
+
+
+void mainImage( out vec4 col,vec2 u)
+{
+    vec2 uv = (u* vec2(fInv(iResolution.x),fInv(iResolution.y)));
+
+    //vec2 uv = (vec2(fInv(iResolution.x),fInv(iResolution.y)));
+     //vec2 uv = (vec2(iResolution.x,iResolution.y));
+      //vec2 uv = (vec2(u.x/iResolution.x,u.y/iResolution.y));
+                float largemin = MIN;
+                float largeMax = MAX ;
+                   float largemin2 = MIN2;
+                float largeMax2 = MAX2;
+               // float actionMax  = largeMax - largemin;
+                vec2 uvcheck =  uv - largemin;
+                vec2 uvcheck2 = largeMax - uv;
+                 vec2 uvcheck12 =  uv - largemin2;
+                vec2 uvcheck22 = largeMax2 - uv;
+                // 1 or 0 based on whether the values are negative
+                float x1 = float(int(uint(floatBitsToUint(uvcheck.x)) >> 31)&1);
+                 float y1 = float(int(uint(floatBitsToUint(uvcheck.y)) >> 31)&1);
+
+                 float x2 = float(int(uint(floatBitsToUint(uvcheck2.x))>> 31)&1);
+                 float y2 = float(int(uint(floatBitsToUint(uvcheck2.y)) >> 31)&1);
+                float x12 = float(int(uint(floatBitsToUint(uvcheck12.x)) >> 31)&1);
+                 float y12 = float(int(uint(floatBitsToUint(uvcheck12.y)) >> 31)&1);
+
+                 float x22 = float(int(uint(floatBitsToUint(uvcheck22.x))>> 31)&1);
+                 float y22 = float(int(uint(floatBitsToUint(uvcheck22.y)) >> 31)&1);
+              // this is going to take me a day or two because i'm without aphysical keyboardbut
+              //the point range check provides a bool of being outside a rect
+              //0 or 1
+              //avoiding ifs may make it faster than AABB
+
+              //int xBOOL = int(uint(floatBitsToUint(newnewUV.x)) >> 31)&1;
+              //int yBOOL = int(uint(floatBitsToUint(newnewUV.y)) >> 31)&1;
+                //4 variable or statement from float subtract
+
+              float boo = float(int(floatBitsToUint(0.1-x1-y1-x2-y2)>> 31));//1or 0if outside the box
+               float boo2 = float(int(floatBitsToUint(0.1-x12-y12-x22-y22)>> 31));
+				vec4 r = vec4(1.0,0.0,0.0,1.0);
+                vec4 g = vec4(0.0,1.0,0.0,1.0);
+                vec4 b = vec4(0.0,0.0,1.0,1.0);
+
+
+               //the trick is this section WIP math has to be less costly thn using an if for 4 value comparisons
+               //thie intention is to put your collision reaction math here and apply it to say... a vector basedon the 1or 0
+               // col = ((1.0 - ((1.0*float(xBOOL))*(1.0*float(yBOOL))))*vec4(1.0,0.0,0.0,1.0)) + (((((1.0*float(xBOOL)) * (1.0*float(yBOOL)))* vec4(0.0,0.0,1.0,1.0))));
+                //col = vec4(uv.x,uv.y,0.0,1.0);
+                  //if /else case using mux and add
+                  col = (1.0-boo)*r +(1.0-boo2)*g + boo*b;
+                  //Collision
+                  float collision = float(int(floatBitsToUint(1.0-col.r-col.g)>> 31));
+                //demonstrates detectection
+                  //col= (collision)*col + (1.0-collision)*fract(0.6+(pow(-1.0,(floor(iTime)))-col));
+
+                  //
+                  float mddie = float(int(floor(iTime*2.0))%2);
+                  col= mddie*(1.0-collision)*col+(1.0-mddie)*col;
+}
